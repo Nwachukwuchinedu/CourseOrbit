@@ -1,44 +1,92 @@
-import { CourseCard } from '../components/CourseCard';
+import { useEffect, useState } from "react";
+import { CourseCard } from "../components/CourseCard";
 
-const courses = [
-  {
-    id: '1',
-    title: 'SwiftUI Fundamentals',
-    description: 'Master the basics of SwiftUI and build beautiful iOS apps',
-    price: 99,
-    image: 'https://images.unsplash.com/photo-1544256718-3bcf237f3974?auto=format&fit=crop&q=80&w=1000',
-    duration: '6 weeks'
-  },
-  {
-    id: '2',
-    title: 'Advanced Swift Programming',
-    description: 'Deep dive into advanced Swift concepts and patterns',
-    price: 149,
-    image: 'https://images.unsplash.com/photo-1618761714954-0b8cd0026356?auto=format&fit=crop&q=80&w=1000',
-    duration: '8 weeks'
-  },
-  {
-    id: '3',
-    title: 'iOS App Development',
-    description: 'Build production-ready iOS applications from scratch',
-    price: 199,
-    image: 'https://images.unsplash.com/photo-1537432376769-00f5c2f4c8d2?auto=format&fit=crop&q=80&w=1000',
-    duration: '12 weeks'
-  }
-];
+interface Course {
+  id: string;
+  course_title: string;
+  img: string;
+  rate_text: string;
+  link: string;
+  hashTag: string;
+}
+
+// Placeholder component
+const CourseCardPlaceholder = () => (
+  <div className="bg-white rounded-lg shadow-md p-4 animate-pulse">
+    <div className="h-40 bg-gray-300 rounded"></div>
+    <div className="mt-4">
+      <div className="h-4 bg-gray-300 rounded w-3/4 mb-2"></div>
+      <div className="h-4 bg-gray-300 rounded w-1/2"></div>
+    </div>
+  </div>
+);
 
 export function Home() {
+  const [courses, setCourses] = useState<Course[]>([]); // Explicitly typed array of courses
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null); // Typing error as string or null
+
+  useEffect(() => {
+    const fetchCourses = async () => {
+      try {
+        const response = await fetch("http://localhost:3000/scrapee"); // Replace with your API endpoint
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        const data = await response.json();
+        setCourses(data.courses as Course[]); // Ensure it's casted to Course[]
+      } catch (error: any) {
+        // Type error as 'any' for now
+        setError(error.message || "An unknown error occurred");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCourses();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 text-center">
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
+            
+          </h1>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+            {/* Render multiple placeholders */}
+            {Array.from({ length: 6 }).map((_, index) => (
+              <CourseCardPlaceholder key={index} />
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return <div>Error fetching courses: {error}</div>;
+  }
+
+  if (courses.length === 0) {
+    return <div>No courses available at the moment.</div>;
+  }
+
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
         <div className="text-center mb-8 sm:mb-12">
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-4">Learn Swift Development</h1>
-          <p className="text-lg sm:text-xl text-gray-600 max-w-2xl mx-auto">Master iOS development with our comprehensive courses</p>
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
+            Learn Swift Development
+          </h1>
+          <p className="text-lg sm:text-xl text-gray-600 max-w-2xl mx-auto">
+            Master iOS development with our comprehensive courses
+          </p>
         </div>
-        
+
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
           {courses.map((course) => (
-            <CourseCard key={course.id} {...course} />
+            <CourseCard key={course.id} {...course} /> // Explicitly typed course object
           ))}
         </div>
       </div>
