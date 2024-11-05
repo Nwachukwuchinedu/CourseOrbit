@@ -34,7 +34,7 @@ export function CourseDetails() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const url: string | undefined = process.env.REACT_APP_API_URL;
+    const url: string | undefined = import.meta.env.VITE_API_URL;
 
     if (!url) {
       throw new Error("REACT_APP_API_URL_1 is not defined in the .env file");
