@@ -34,9 +34,15 @@ export function CourseDetails() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    const url: string | undefined = process.env.REACT_APP_API_URL;
+
+    if (!url) {
+      throw new Error("REACT_APP_API_URL_1 is not defined in the .env file");
+    }
+
     const fetchCourse = async () => {
       try {
-        const response = await fetch(`http://localhost:3000/scrapee/${id}`);
+        const response = await fetch(`${url}/${id}`);
         if (!response.ok) {
           throw new Error("Network response was not ok");
         }

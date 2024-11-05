@@ -28,8 +28,14 @@ export function Home() {
 
   useEffect(() => {
     const fetchCourses = async () => {
+      const url: string | undefined = import.meta.env.VITE_API_URL;
+
+      if (!url) {
+        throw new Error("VITE_API_URL is not defined in the .env file");
+      }
+
       try {
-        const response = await fetch("http://localhost:3000/scrapee"); // Replace with your API endpoint
+        const response = await fetch(url); // Replace with your API endpoint
         if (!response.ok) {
           throw new Error("Network response was not ok");
         }
@@ -50,9 +56,7 @@ export function Home() {
     return (
       <div className="min-h-screen bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 text-center">
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
-            
-          </h1>
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-4"></h1>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
             {/* Render multiple placeholders */}
             {Array.from({ length: 6 }).map((_, index) => (
